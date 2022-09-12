@@ -1,32 +1,14 @@
-import { useState } from "preact/hooks";
-
 import RunnerBoy from "../islands/RunnerBoy.tsx";
 
 export default function Home() {
-  const [coords, setCoords] = useState({ x: 0, y: 0 });
-  const [runners, setRunners] = useState([<RunnerBoy x={0} y={0} />]);
-
-  const handleMouseMove = (event: any) => {
-    setCoords({
-      x: event.clientX - event.target.offsetLeft,
-      y: event.clientY - event.target.offsetTop,
-    });
-  };
-
-  const handleClick = () => {
-    setRunners([
-      ...runners,
-      <RunnerBoy x={0} y={0} />,
-    ]);
-  };
-
   return (
-    <div
-      class="p-4 mx-auto w-screen h-screen"
-      onMouseMove={handleMouseMove}
-      onClick={handleClick}
-    >
-      {runners}
+    <div class="p-2 mx-auto w-screen h-screen">
+      <RunnerBoy />
+      <a href="https://www.customizedgirl.com/design/2896299d22fe703368c3b3be8b76b087_4696306/.com">
+        <div class="fixed bottom-0 left-0 w-screen text-center p-2 bg-blue-600 text-white">
+          Order Your Shirt Now!
+        </div>
+      </a>
     </div>
   );
 }

@@ -1,106 +1,35 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "preact/hooks";
 
-import { Image } from "../components/Image.tsx";
+import Image from "../components/Image.tsx";
 
-export default function RunnerBoy(props: { x: number; y: number }) {
-  const controlRef = useRef<any>({});
-  const imageRef = useRef<any>();
-  const boundRef = useRef<any>();
+export default function RunnerBoy() {
+  const [coords, setCoords] = useState({ x: 0, y: 0 });
+  const [runners, setRunners] = useState([
+    <Image x={100} y={100} />,
+  ]);
 
-  const [speed] = useState(Math.floor(Math.random() * (10 - 5 + 1) + 5));
-  const [trX, setTRX] = useState(props.x);
-  const [trY, setTRY] = useState(props.y);
-  const [direction, setDirection] = useState<"se" | "ne" | "sw" | "nw">("se");
-  const [windowWidth, setWindowWidth] = useState(self.innerWidth);
-  const [windowHeight, setWindowHeight] = useState(self.innerHeight);
-
-  const getSize = (): { [T: string]: number } => ({
-    width: window.innerWidth,
-    height: window.innerHeight,
-  });
-  const [windowSize, setWindowSize] = useState(getSize);
-  useLayoutEffect(() => {
-    const onResize = () => setWindowSize(getSize);
-    self.addEventListener("resize", onResize);
-    return (): void => window.removeEventListener("resize", onResize);
-  }, []);
-  useEffect(() => {
-    if (boundRef.current && imageRef.current) {
-      controlRef.current.parentWidth =
-        boundRef.current?.getBoundingClientRect().width;
-      controlRef.current.parentHeight =
-        boundRef.current?.getBoundingClientRect().height;
-      controlRef.current.childWidth =
-        imageRef.current?.getBoundingClientRect().width;
-      controlRef.current.childHeight =
-        imageRef.current?.getBoundingClientRect().height;
-    }
-  }, [imageRef, boundRef, controlRef, windowWidth, windowHeight]);
-
-  const run = () => {
-    requestAnimationFrame(run);
-    switch (direction) {
-      case "ne":
-        setTRX(trX + speed);
-        setTRY(trY - speed);
-
-        if (trY <= 0) {
-          setDirection("se");
-        } else if (trX >= 0) {
-          setDirection("nw");
-        }
-
-        break;
-      case "nw":
-        setTRX(trX - speed);
-        setTRY(trY - speed);
-
-        if (trY <= 0) {
-          setDirection("sw");
-        } else if (trX <= windowWidth) {
-          setDirection("ne");
-        }
-
-        break;
-      case "se":
-        setTRX(trX + speed);
-        setTRY(trY + speed);
-
-        if (trY >= windowHeight) {
-          setDirection("ne");
-        } else if (trX >= windowWidth) {
-          setDirection("sw");
-        }
-
-        break;
-      case "sw":
-        setTRX(trX - speed);
-        setTRY(trY + speed);
-
-        if (trY >= windowHeight) {
-          setDirection("nw");
-        } else if (trX <= 0) {
-          setDirection("se");
-        }
-
-        break;
-    }
+  const handleMouseMove = (event: any) => {
+    setCoords({
+      x: event.clientX - event.target.offsetLeft,
+      y: event.clientY - event.target.offsetTop,
+    });
   };
 
-  useEffect(() => {
-    setWindowHeight(self.innerHeight);
-    setWindowWidth(self.innerWidth);
-
-    run();
-  }, []);
-
-  useEffect(() => {
-    console.log(trX, trY);
-  }, [trX, trY]);
+  const handleClick = () => {
+    // console.log(coords);
+    setRunners([
+      ...runners,
+      <Image x={coords.x - 88} y={coords.y - 92} />,
+    ]);
+  };
 
   return (
-    <div ref={boundRef} class={`flex gap-2 h-full w-full`}>
-      <Image ref={imageRef} top={props.y} left={props.x} />
+    <div
+      onClick={handleClick}
+      onMouseMove={handleMouseMove}
+      class="h-full w-full"
+    >
+      {runners}
     </div>
   );
 }
